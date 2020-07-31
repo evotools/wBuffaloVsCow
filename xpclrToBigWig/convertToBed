@@ -1,0 +1,26 @@
+#!/usr/bin/env python
+import sys
+
+if __name__ == "__main__":
+    try: 
+        if ".gz" in sys.argv[1]:
+            import gzip as gz
+            infile = gz.open(sys.argv[1])
+        elif sys.argv[1] == '-':
+            infile = sys.stdin
+        else:
+            infile = open(sys.argv[1])
+    except: infile = sys.stdin
+    todrop = int(sys.argv[2])
+
+    for n, line in enumerate(infile):
+        if n == 0: continue
+        line = line.strip().split()
+        central = int(round(((int(line[3]) + int(line[2])) / 2)))
+        bpi = str(central - todrop - 1)
+        bpe = str(central + todrop)
+        o_line = line[1:4] + [line[12] if len(line) > 10 else "NA"]
+        o_line[1] = bpi
+        o_line[2] = bpe
+        print('\t'.join(o_line))
+
