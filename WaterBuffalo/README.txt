@@ -21,7 +21,7 @@ The PCAs were calculated using PLINK v1.90b4 64-bit and the following parameters
 ## Variant Calling and Filtration
 The tools and parameters used to perform this methodology has been presented in a tabular format in Variant_Calling_and_filtering_commands.docx
 
-##TREEMIX
+## TreeMix analysis
 For Treemix analysis, at first, the filtered biallelic Single Nucleotide Variants (SNVs) were processed using PLINK v1.90b4 64-bit and following parameters:
 
   --allow-extra-chr
@@ -52,6 +52,23 @@ The breed-stratified allele frequency report was converted to an input file suit
 
 Finally 'treemix_graphmaker.R' was used to create Figure 1B.
 
+## Compute XP-EHH
+Chromosome-wise input files required for XP-EHH calculations for each breed was created using 'sample_wise_hapbin_inputfile_maker.sh'.
+
+For calculating XP-EHH scores for all chromosomes and for all breed combinations (21 unique combinations for 7 breeds in this study), 'xpehh_calculator_array_job.sh' was run.
+
+Both scripts can be submitted using the qsub command. For example: qsub sample_wise_hapbin_inputfile_maker.sh
+
+The following breeds were present in the breeds.txt file in sample_wise_hapbin_inputfile_maker.sh script:
+
+Banni
+Bhadawari
+Jaffrabadi
+Med
+Murrah
+Pandharpuri
+Surti
+
 ## Compute XP-CLR
 Variants with global minor allele frequency < 1% were discarded using vcftools with the following command:
     
@@ -65,7 +82,7 @@ We then created the pairwise comparisons of breeds using the script MakePairs.py
 
 Where LISTS is the subfolder which contains the lists of individuals, 5 is the minimum number of individuals 
 per breed to consider for the analysis and 24 is the number of autosomes.
-The output is a list of pairwise comparison, repeated 29 times (one per chromosome).
+The output is a list of pairwise comparison, repeated 24 times (one per chromosome).
 We then submit the analysis to the scheduler using the following command:
     
     qsub -t 1-`wc -l toProcess.txt | cut -f 1` -tc 150 01-XPCLR.sh  -f filt.vcf.gz -l toProcess.txt -w 50000 -s 600
@@ -75,5 +92,5 @@ Finally, we gathered the results using the following command:
     
     ./02-Combine.sh 24
     
-Where 29 is the number of chromosomes processed. The final outputs are collected in XPCLR_RESULTS in
+Where 24 is the number of chromosomes processed. The final outputs are collected in XPCLR_RESULTS in
 pairs of breeds (XPCLR_RESULTS/Breed1_Breed2).
